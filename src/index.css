@@ -1,12 +1,32 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;400;500;600;800&family=Work+Sans&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap");
 
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f4f4f5;
+  --text-primary: #000000;
+  --text-secondary: #52525b;
+  --accent-color: #3b82f6;
+  --border-color: #e4e4e7;
+  --error-color: #ef4444;
+}
+
+[data-theme="dark"] {
+  --bg-primary: #000000;
+  --bg-secondary: #171719;
+  --text-primary: #ffffff;
+  --text-secondary: #a1a1aa;
+  --accent-color: #60a5fa;
+  --border-color: #27272a;
+  --error-color: #f87171;
+}
+
 html,
 body {
   margin: 0;
   padding: 0;
-  background: black;
-  color: white;
+  background: var(--bg-primary);
+  color: var(--text-primary);
   font-family: "PT Sans", Roboto Slab, serif;
   height: 100%;
   width: 100%;
@@ -26,21 +46,21 @@ body {
   border-radius: 10px;
   text-decoration: none;
   letter-spacing: 1px;
-  background-color: white;
-  color: black;
+  background-color: var(--text-primary);
+  color: var(--bg-primary);
   border: 1px solid transparent;
   transition: all 0.5s ease;
 }
 
 .navlink:hover {
   background-color: transparent;
-  color: #e1e1e1;
-  border: 1px solid white;
+  color: var(--text-primary);
+  border: 1px solid var(--text-primary);
 }
 
 .MuiOutlinedInput-input-root.Mui-focused,
 .MuiOutlinedInput-notchedOutline {
-  border-color: white !important;
+  border-color: var(--text-primary) !important;
 }
 
 .rotate {
@@ -61,7 +81,7 @@ input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
   transition: background-color 50000s ease-in-out 0s;
-  -webkit-text-fill-color: #f7f7f7 !important;
+  -webkit-text-fill-color: var(--text-primary) !important;
 }
 
 code.language-javascript span {
@@ -71,8 +91,8 @@ code.language-javascript span {
 }
 
 pre.syntax-highlighter {
-  background-color: #171719 !important;
-  color: #f7f7f7 !important;
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
 }
 
 /* Hide scrollbar by default */
@@ -111,4 +131,37 @@ pre.syntax-highlighter {
   background: linear-gradient(to right, rgb(160, 160, 184), rgb(49, 34, 5));
   background-clip: text;
   color: transparent;
+}
+
+/* ---- Landing page button styles ---- */
+.hero-cta-btn {
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.hero-cta-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.18) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform 0.55s ease;
+}
+
+.hero-cta-btn:hover::after {
+  transform: translateX(100%);
+}
+
+.hero-cta-btn:hover {
+  box-shadow: 0 0 50px rgba(96,165,250,0.5), 0 6px 30px rgba(0,0,0,0.5);
+}
+
+.hero-secondary-btn {
+  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+.hero-secondary-btn:hover {
+  background: rgba(255,255,255,0.08) !important;
+  border-color: rgba(255,255,255,0.25) !important;
 }

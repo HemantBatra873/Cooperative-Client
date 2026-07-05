@@ -5,44 +5,8 @@ import AnimatedThinkingText from "./ThinkingAnimation";
 import toast from "react-hot-toast";
 import CodeBlock from "./CodeBlock";
 
-interface MessageBlock {
-  type: "code" | "text";
-  content: string;
-  language?: string;
-}
-
-function extractCodeBlocks(message: string): MessageBlock[] {
-  const blocks: MessageBlock[] = [];
-  const regex = /```([a-z]*)?\n([\s\S]*?)```/g;
-  let lastIndex = 0;
-  let match: RegExpExecArray | null;
-
-  while ((match = regex.exec(message)) !== null) {
-    if (match.index > lastIndex) {
-      blocks.push({ type: "text", content: message.substring(lastIndex, match.index).trim() });
-    }
-    const language = match[1] || "";
-    const code = match[2].trim();
-    blocks.push({ type: "code", content: code, language });
-    lastIndex = match.index + match[0].length;
-  }
-
-  if (lastIndex < message.length) {
-    blocks.push({ type: "text", content: message.substring(lastIndex).trim() });
-  }
-
-  return blocks;
-}
-
-function formatResponse(text: string): string {
-  return text.split('\n').map(line => {
-    line = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    if (line.trim().startsWith('*')) {
-      return `<li>${line.trim().substring(1).trim()}</li>`;
-    }
-    return `<p>${line.trim()}</p>`;
-  }).join('');
-}
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface ChatItemProps {
   content: string;
@@ -52,7 +16,6 @@ interface ChatItemProps {
 }
 
 const ChatItem: React.FC<ChatItemProps> = ({ content, role, loading, generating }) => {
-  const messageBlocks = extractCodeBlocks(content);
   const theme: Theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   // State for feedback
@@ -116,11 +79,10 @@ const ChatItem: React.FC<ChatItemProps> = ({ content, role, loading, generating 
 
   const userStyles = {
     MaxWidth: isMobile ? "250px" : "500px",
-    bgcolor: "white",
-    color: "blue",
+    bgcolor: "var(--bg-secondary)",
+    color: "var(--text-primary)",
     px: 2,
-    borderRadius: "12px",
-    borderTopRightRadius: "2px",
+    borderRadius: "16px",
   };
 
   const modelStyles = {
@@ -147,24 +109,50 @@ const ChatItem: React.FC<ChatItemProps> = ({ content, role, loading, generating 
         {role === "model" && loading ? (
           <AnimatedThinkingText />
         ) : (
-          messageBlocks.map((block, index) => (
-            <React.Fragment key={index}>
-              {block.type === "text" ? (
-                <Typography component="div" sx={{
-                  fontSize: '16px',
-                  color: role === "model" ? "white" : "black",
-                  fontWeight: role === "model" ? "400" : "700",
-                  marginX: '0',
-                }}>
-                  <div dangerouslySetInnerHTML={{ __html: formatResponse(block.content) }} />
-                </Typography>
-              ) : (
-                <CodeBlock content={block.content} language={block.language || "javascript"} />
-              )}
-
-            </React.Fragment>
-
-          ))
+          <Box
+            sx={{
+              fontSize: "16px",
+              color: "var(--text-primary)",
+              fontWeight: "400",
+              "& p": { marginY: "10px" },
+              "& h1, & h2, & h3, & h4, & h5, & h6": { marginY: "15px", fontWeight: "bold" },
+              "& ul, & ol": { paddingLeft: "20px", marginY: "10px" },
+              "& li": { marginY: "5px" },
+              "& strong": { fontWeight: "bold" },
+              "& a": { color: "#1976d2", textDecoration: "none" },
+              "& a:hover": { textDecoration: "underline" },
+            }}
+          >
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              components={{
+                code({ node, inline, className, children, ...props }: any) {
+                  const match = /language-(\w+)/.exec(className || "");
+                  return !inline && match ? (
+                    <CodeBlock
+                      content={String(children).replace(/\n$/, "")}
+                      language={match[1]}
+                    />
+                  ) : (
+                    <code 
+                      className={className} 
+                      {...props}
+                      style={{
+                        backgroundColor: "rgba(128, 128, 128, 0.2)",
+                        padding: "2px 4px",
+                        borderRadius: "4px",
+                        fontFamily: "monospace",
+                      }}
+                    >
+                      {children}
+                    </code>
+                  );
+                },
+              }}
+            >
+              {content}
+            </ReactMarkdown>
+          </Box>
         )}
 
         {role === "model" && !generating && (
@@ -181,7 +169,7 @@ const ChatItem: React.FC<ChatItemProps> = ({ content, role, loading, generating 
                 background: "transparent",
                 border: "none",
                 cursor: "pointer",
-                color: "#aaa",
+                color: "var(--text-secondary)",
                 fontSize: "18px",
               }}
             >
@@ -195,7 +183,7 @@ const ChatItem: React.FC<ChatItemProps> = ({ content, role, loading, generating 
                 background: "transparent",
                 border: "none",
                 cursor: "pointer",
-                color: "#aaa",
+                color: "var(--text-secondary)",
                 fontSize: "18px",
               }}
             >
@@ -209,7 +197,7 @@ const ChatItem: React.FC<ChatItemProps> = ({ content, role, loading, generating 
                 background: "transparent",
                 border: "none",
                 cursor: "pointer",
-                color: "#aaa",
+                color: "var(--text-secondary)",
                 fontSize: "18px",
               }}
             >
@@ -223,7 +211,7 @@ const ChatItem: React.FC<ChatItemProps> = ({ content, role, loading, generating 
                 background: "transparent",
                 border: "none",
                 cursor: "pointer",
-                color: isSpeaking ? "#fff" : "#aaa",
+                color: isSpeaking ? "var(--text-primary)" : "var(--text-secondary)",
                 fontSize: "18px",
               }}
             >
@@ -237,7 +225,7 @@ const ChatItem: React.FC<ChatItemProps> = ({ content, role, loading, generating 
                 background: "transparent",
                 border: "none",
                 cursor: "pointer",
-                color: "#aaa",
+                color: "var(--text-secondary)",
                 fontSize: "18px",
               }}
             >

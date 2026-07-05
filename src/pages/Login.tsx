@@ -57,7 +57,7 @@ const Login = () => {
             width: "100%",
             height: "100%",
             objectFit: "cover",
-            filter: "grayscale(100%) brightness(0.6) contrast(1.9) saturate(1.9)",
+            filter: "grayscale(100%) brightness(0.25) contrast(1.4)",
             zIndex: 0, // Push it behind content
           }}
         />

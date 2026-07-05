@@ -11,8 +11,8 @@ const AnimatedThinkingText = () => {
                 sx={{
                     fontSize: "18px",
                     paddingY: "13px",
-                    fontWeight: "600",
-                    color: "white", // Text remains white
+                    fontWeight: "400",
+                    color: "var(--text-secondary)", // Text remains white
                     textShadow: "0 0 10px rgba(128, 128, 128, 0.5)", // Grey glow effect
                 }}
             >

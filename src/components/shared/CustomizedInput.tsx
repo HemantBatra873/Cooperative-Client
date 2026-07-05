@@ -17,7 +17,7 @@ const CustomizedInput = (props: Props) => {
   return (
     <TextField
       margin="normal"
-      InputLabelProps={{ style: { color: "white" } }}
+      InputLabelProps={{ style: { color: "var(--text-primary)" } }}
       name={props.name}
       label={props.label}
       type={props.type}
@@ -26,7 +26,7 @@ const CustomizedInput = (props: Props) => {
           width: isMobile? "250px" : "400px",
           borderRadius: 10,
           fontSize: isMobile? 15 : 20,
-          color: "white",
+          color: "var(--text-primary)",
         },
       }}
     />

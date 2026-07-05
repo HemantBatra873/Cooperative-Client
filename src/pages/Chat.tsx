@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Box, IconButton, useMediaQuery, useTheme, Theme, AppBar, Toolbar, Typography, Drawer, Button, Link } from "@mui/material";
+import { Box, IconButton, useMediaQuery, useTheme, Theme, AppBar, Toolbar, Typography, Drawer, Button, Link, InputBase } from "@mui/material";
 import ChatItem from "../components/chat/ChatItem";
-import { IoMdMenu, IoMdSend } from "react-icons/io";
+import { IoMdMenu } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import {
   deleteUserChats,
@@ -11,7 +11,7 @@ import {
 import toast from "react-hot-toast";
 import { useAuth } from "../contexts/AuthContext";
 import Logo from "../components/shared/Logo";
-import { FaImage } from "react-icons/fa";
+import { FiPlus, FiArrowUp, FiMic } from "react-icons/fi";
 import Profile from "../components/shared/profile";
 type Message = {
   role: "user" | "model";
@@ -19,26 +19,112 @@ type Message = {
   loading: boolean;
   generating: boolean;
 };
+
+const ChatInputArea = ({ onSend, isGenerating, isMobile }: { onSend: (content: string, onError: () => void) => void, isGenerating: boolean, isMobile: boolean }) => {
+  const [inputValue, setInputValue] = useState("");
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleSend = () => {
+    const content = inputRef.current?.value.trim() || inputValue.trim();
+    if (!content) return;
+    if (inputRef.current) inputRef.current.value = "";
+    setInputValue("");
+    onSend(content, () => {
+      setInputValue(content);
+      if (inputRef.current) inputRef.current.value = content;
+    });
+  };
+
+  const isExpanded = inputValue.includes("\n") || inputValue.length > 50;
+
+  return (
+    <Box
+      sx={{
+        width: "100%", // Full width on mobile
+        maxWidth: "750px", // Max width for large screens
+        borderRadius: 12,
+        backgroundColor: "#171719",
+        display: "flex",
+        flexWrap: isExpanded ? "wrap" : "nowrap",
+        alignItems: "center",
+        padding: isExpanded ? "8px" : "4px",
+        boxShadow: "0px -30px 10px rgba(0, 0, 0, 0.4)",
+      }}
+    >
+      <IconButton sx={{
+        order: isExpanded ? 2 : 1,
+        color: "grey", mx: 1, transition: "color 0.3s ease",
+        ":hover": { color: "white" },
+      }}>
+        <FiPlus />
+      </IconButton>
+
+      <InputBase
+        inputRef={inputRef}
+        multiline
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+        placeholder="Ask Cooperative"
+        sx={{
+          order: isExpanded ? 1 : 2,
+          width: isExpanded ? "100%" : "auto",
+          flexGrow: 1,
+          fontWeight: "400",
+          backgroundColor: "#171719",
+          padding: isExpanded ? "8px 12px" : "14px 0px",
+          color: "white",
+          fontSize: isMobile ? "16px" : "16px",
+          borderRadius: "12px",
+          "& textarea": {
+            scrollbarWidth: "none",
+            "&::-webkit-scrollbar": { display: "none" },
+          },
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            handleSend();
+          }
+        }}
+      />
+      
+      <Box
+        sx={{
+          order: 3,
+          display: "flex",
+          alignItems: "center",
+          marginLeft: isExpanded ? "auto" : 0,
+        }}
+      >
+        <IconButton sx={{
+          color: "grey", mx: 1, transition: "color 0.3s ease",
+          ":hover": { color: "white" },
+        }}>
+          <FiMic />
+        </IconButton>
+        <IconButton onClick={handleSend} disabled={isGenerating || !inputValue.trim()} sx={{
+          color: "white", mr: 1, ml: 0, transition: "background-color 0.3s ease",
+          backgroundColor: "#1976d2",
+          ":hover": { backgroundColor: "#115293" },
+        }}>
+          <FiArrowUp />
+        </IconButton>
+      </Box>
+    </Box>
+  );
+};
+
 const Chat = () => {
   const theme: Theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
-  const inputRef = useRef<HTMLInputElement | null>(null);
   const auth = useAuth();
   const [chatMessages, setChatMessages] = useState<Message[]>([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
 
-
-  const handleSubmit = async () => {
-    const content = inputRef.current?.value.trim();
-    if (!content) return; // Prevent empty messages
-
-    if (inputRef.current) {
-      inputRef.current.value = "";
-    }
-
+  const handleSubmit = async (content: string, onError: () => void) => {
     // Add user message and an empty model message (to start streaming effect)
     setIsGenerating(true);
     setChatMessages((prev) => [
@@ -69,7 +155,7 @@ const Chat = () => {
           })
         );
 
-        currentIndex++;
+        currentIndex += 15; // Reveal 15 words at a time for faster streaming
 
         if (currentIndex >= words.length) {
           clearInterval(interval);
@@ -81,9 +167,7 @@ const Chat = () => {
       toast.error("Failed to fetch response. Please try again.");
       setChatMessages((prev) => prev.slice(0, -2));
       setIsGenerating(false);
-      if (inputRef.current) {
-        inputRef.current.value = content;
-      }
+      onError(); // Restore input value via callback
     }
   };
 
@@ -239,7 +323,7 @@ const Chat = () => {
               This is an AI chatbot website developed with MERN stack using Material-UI and Gemini 2.0 Flash API.
               The source code is available at{" "}
               <Link
-                href="https://github.com/HemantBatra873/agraser_backend" // Replace with your actual GitHub link
+                href="https://github.com/HemantBatra873/agraser_backend" 
                 target="_blank"
                 rel="noopener noreferrer"
                 color="white"
@@ -249,7 +333,7 @@ const Chat = () => {
               </Link>.
               You can contact{" "}
               <Link
-                href="https://www.linkedin.com/in/hemantbatra43/" // Replace with your email or contact page
+                href="https://www.linkedin.com/in/hemantbatra43/" 
                 color="white"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -260,10 +344,13 @@ const Chat = () => {
               for more information about the project.
             </Typography>
           ) : (
-            chatMessages.map((chat, index) => (
-              //@ts-ignore
-              <ChatItem content={chat.content} role={chat.role} generating={chat.generating} loading={chat.loading} key={index} />
-            ))
+            <>
+              {chatMessages.map((chat, index) => (
+                //@ts-ignore
+                <ChatItem content={chat.content} role={chat.role} generating={chat.generating} loading={chat.loading} key={index} />
+              ))}
+              <div style={{ paddingBottom: "120px", flexShrink: 0 }} />
+            </>
           )}
         </Box>
 
@@ -280,60 +367,7 @@ const Chat = () => {
             }}
           >
             {/* Input and Buttons Container */}
-            <Box
-              sx={{
-                width: "100%", // Full width on mobile
-                maxWidth: "750px", // Max width for large screens
-                borderRadius: 12,
-                border: "1px solid grey",
-                backgroundColor: "#171719",
-                display: "flex",
-                alignItems: "center",
-                boxShadow: "0px -30px 10px rgba(0, 0, 0, 0.4)",
-              }}
-            >
-              <IconButton sx={{
-                color: "grey", mx: 1, transition: "color 0.3s ease", // Smooth transition effect
-                ":hover": {
-                  color: "white", // Change color to white on hover
-                },
-              }}>
-                <FaImage />
-              </IconButton>
-
-              <input
-                ref={inputRef}
-                type="text"
-                placeholder="Ask Cooperative"
-                style={{
-                  width: "100%",
-                  fontWeight: "400",
-                  backgroundColor: "#171719",
-                  padding: "18px",
-                  paddingLeft: "0px",
-                  paddingRight: "0px",
-                  border: "none",
-                  outline: "none",
-                  color: "white",
-                  fontSize: isMobile ? "16px" : "16px",
-                  borderRadius: "12px",
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault(); // Prevents adding a new line in input
-                    handleSubmit();
-                  }
-                }}
-              />
-              <IconButton onClick={handleSubmit} disabled={isGenerating} sx={{
-                color: "grey", mx: 1, transition: "color 0.3s ease", // Smooth transition effect
-                ":hover": {
-                  color: "white", // Change color to white on hover
-                },
-              }}>
-                <IoMdSend />
-              </IconButton>
-            </Box>
+            <ChatInputArea onSend={handleSubmit} isGenerating={isGenerating} isMobile={isMobile} />
 
             {/* Warning Message */}
             <Typography

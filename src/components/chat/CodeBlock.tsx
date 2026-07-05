@@ -1,7 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { coldarkDark } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { AiOutlineCopy } from "react-icons/ai";
+import { AiTwotoneCopy } from "react-icons/ai";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -24,11 +24,10 @@ const CodeBlock = ({ content, language = "javascript" }: { content: string; lang
             sx={{
                 overflowX: "auto",
                 fontFamily: "PT Sans , Roboto Slab , serif",
-                borderRadius: "10px",
-                border: "1px solid #333",
-                background: "#1e1e1e",
+                borderRadius: "16px",
+                background: "var(--bg-secondary)",
                 position: "relative",
-                paddingTop: "30px",
+                padding: "15px",
                 marginTop: "30px",
             }}
         >
@@ -40,28 +39,22 @@ const CodeBlock = ({ content, language = "javascript" }: { content: string; lang
                     justifyContent: "space-between",
                     alignItems: "center",
                     padding: "8px 12px",
-                    position: "absolute",
-                    top: "0",
-                    left: "0",
-                    right: "0",
-                    background: "#222",
-                    borderTopLeftRadius: "10px",
-                    borderTopRightRadius: "10px",
+                    background: "transparent",
                     boxSizing: "border-box",
                 }}
             >
-                <Typography sx={{ color: "#aaa", fontSize: "14px" }}>{language}</Typography>
+                <Typography sx={{ color: "var(--text-secondary)", fontSize: "21px", fontWeight: "600" }}>{language}</Typography>
                 <button
                     onClick={handleCopy}
                     style={{
                         background: "transparent",
                         border: "none",
                         cursor: "pointer",
-                        color: copied ? "#fff" : "#aaa",
-                        fontSize: "16px",
+                        color: copied ? "var(--text-primary)" : "var(--text-secondary)",
+                        fontSize: "21px",
                     }}
                 >
-                    <AiOutlineCopy />
+                    <AiTwotoneCopy />
                 </button>
             </Box>
 
