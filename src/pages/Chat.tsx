@@ -78,6 +78,12 @@ const Chat = () => {
       }, 1);
     } catch (error) {
       console.error(error);
+      toast.error("Failed to fetch response. Please try again.");
+      setChatMessages((prev) => prev.slice(0, -2));
+      setIsGenerating(false);
+      if (inputRef.current) {
+        inputRef.current.value = content;
+      }
     }
   };
 

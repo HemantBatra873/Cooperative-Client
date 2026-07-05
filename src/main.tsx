@@ -8,9 +8,7 @@ import { Toaster } from "react-hot-toast";
 import axios from "axios";
 import { AuthProvider } from "./contexts/AuthContext.tsx";
 
-//production backend : "http://localhost:5000/api/v1/"
-//deplyment backend : "https://cooperative-backend.vercel.app/api/v1/"
-axios.defaults.baseURL = "https://cooperative-backend.vercel.app/api/v1/";
+axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 axios.defaults.withCredentials = true;
 const theme = createTheme({
   typography: {
