@@ -1,4 +1,4 @@
-import { Box, Typography, useMediaQuery, useTheme, Theme } from "@mui/material";
+import { Box, useMediaQuery, useTheme, Theme } from "@mui/material";
 import { AiOutlineLike, AiFillLike, AiOutlineDislike, AiFillDislike, AiOutlineCopy, AiOutlineSound, AiOutlineExclamationCircle } from "react-icons/ai";
 import React, { useRef, useState } from 'react';
 import AnimatedThinkingText from "./ThinkingAnimation";

@@ -1,6 +1,6 @@
 import { AppBar, Box, IconButton, Toolbar } from '@mui/material'
 import Logo from './shared/Logo'
-import { IoChatbubbleEllipsesOutline, IoMoonOutline, IoSunnyOutline } from "react-icons/io5";
+import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
 import { useAuth } from '../contexts/AuthContext'
 import NavigationLink from './shared/NavigationLink'
 import Profile from './shared/profile'

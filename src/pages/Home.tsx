@@ -6,7 +6,7 @@ import AnimatedHeadline from "../components/home/AnimatedHeadline";
 import FeatureCard from "../components/home/FeatureCard";
 import { useInView } from "react-intersection-observer";
 import video from "/video.mp4";
-import { Box, Button, Container, Grid, Typography, useTheme, useMediaQuery } from "@mui/material";
+import { Box, Button, Container, Grid, Typography } from "@mui/material";
 
 // ---- Feature data ----
 const features = [
@@ -109,9 +109,6 @@ const StatItem = ({ value, label, suffix, delay }: { value: string; label: strin
 // ---- Main Home Page ----
 const Home = () => {
   const auth = useAuth();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
   return (
     <Box
       sx={{
@@ -189,7 +186,7 @@ const Home = () => {
             animate="visible"
           >
             <Typography
-              component={motion.h1}
+              component={motion.h1 as any}
               variants={itemVariants}
               variant="h2"
               sx={{
