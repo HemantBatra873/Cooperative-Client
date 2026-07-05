@@ -52,7 +52,7 @@ const containerVariants = {
 
 const itemVariants = {
   hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] } },
 };
 
 // ---- Stats data ----
@@ -68,11 +68,11 @@ const StatItem = ({ value, label, suffix, delay }: { value: string; label: strin
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.3 });
   return (
     <Box
-      component={motion.div}
+      component={motion.div as any}
       ref={ref}
       initial={{ opacity: 0, scale: 0.8 }}
       animate={inView ? { opacity: 1, scale: 1 } : {}}
-      transition={{ duration: 0.5, delay, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.5, delay, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
       sx={{ textAlign: "center", flex: "1 1 120px", minWidth: 100 }}
     >
       <Typography
@@ -180,7 +180,7 @@ const Home = () => {
 
           {/* Main headline */}
           <Box
-            component={motion.div}
+            component={motion.div as any}
             variants={containerVariants}
             initial="hidden"
             animate="visible"
@@ -203,7 +203,7 @@ const Home = () => {
 
             {/* Animated rotating phrase */}
             <Box
-              component={motion.div}
+              component={motion.div as any}
               variants={itemVariants}
               sx={{
                 typography: 'h2',
@@ -219,7 +219,7 @@ const Home = () => {
 
             {/* Subtitle */}
             <Typography
-              component={motion.p}
+              component={motion.p as any}
               variants={itemVariants}
               variant="subtitle1"
               sx={{
@@ -236,7 +236,7 @@ const Home = () => {
 
             {/* CTA buttons */}
             <Box
-              component={motion.div}
+              component={motion.div as any}
               variants={itemVariants}
               sx={{ display: "flex", gap: 2, justifyContent: "center", flexWrap: "wrap" }}
             >
@@ -325,7 +325,7 @@ const Home = () => {
         <Container maxWidth="md">
           {/* Section label */}
           <Box
-            component={motion.div}
+            component={motion.div as any}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.3 }}
@@ -403,7 +403,7 @@ const Home = () => {
       >
         <Container maxWidth="md">
           <Box
-            component={motion.div}
+            component={motion.div as any}
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.3 }}
